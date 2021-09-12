@@ -1,4 +1,7 @@
-# Description: https://learn.adafruit.com/adafruit-tsl2591/python-circuitpython
+"""
+Print out values from a TSL2591 light sensor when the BOOT button on the QT Py is pressed
+Description: https://learn.adafruit.com/adafruit-tsl2591/python-circuitpython
+"""
 
 import time
 import board
@@ -32,19 +35,19 @@ sensor.integration_time = adafruit_tsl2591.INTEGRATIONTIME_100MS
 ######################################################################
 
 # Main code
-record = False
+record = False #The value of this variable determines if sensor values are to be recorded. Will be set to TRUE when the BOOT button on the QT Py is pressed
 
-while True:
-    Bbutton_state = Bbutton.value  # Check the state of the boot button
-    pixels[0] = (0, 0, 5)  # Make the QT Py neopixel a dim blue to indicate it is idle
+while True: #Do the following continuously:
+    Bbutton_state = Bbutton.value  #Check the state of the BOOT button
+    pixels[0] = (0, 0, 5)  #Make the QT Py neopixel a dim blue to indicate it is idle
 
-    if not Bbutton_state:  # If the button is pressed, start recording sensor values
-        record = True
-        time.sleep(0.5) # Introduce a delay to reduce sensitivity to button pressing speeds
+    if not Bbutton_state:  #If the BOOT button is pressed:
+        record = True #Change this value to indicate that sensor values should be recorded
+        time.sleep(0.5) #Introduce a delay to reduce sensitivity to button pressing speeds
 
-        while record is True:
-            Bbutton_state = Bbutton.value  # Keep checking the state of the boot button
-            pixels[0] = (0, 0, 0)  # Turn off the QT Py neopixel to indicate that recording is in progress
+        while record is True: #Until the BOOT button is pressed again:
+            Bbutton_state = Bbutton.value  #Keep checking the state of the boot button
+            pixels[0] = (0, 0, 0)  #Turn off the QT Py neopixel to indicate that recording is in progress
 
             """
             Things that that the sensor can measure:
@@ -54,13 +57,11 @@ while True:
             print('Full spectrum: {0}'.format(sensor.full_spectrum)) #visible & infrared light, Range: 0-2147483647 (32 bit)
             #raw_luminosity also exists: "A 2-tuple of raw sensor visible+IR and IR only light levels.  Each is a 16-bit value with no units where the higher the value the more light."
             """
-            # Print out the values that should be kept
+            # Print out the values that should be kept to the serial port
             print("{},{},{}".format(sensor.lux, sensor.visible, sensor.infrared))
-            #time.sleep(0.5) #Introduce a delay so readings are taken at a set rate
+            #time.sleep(0.5) #Introduce a delay (in seconds) if you want to modify the frequency at which readings are taken
 
-            if not Bbutton_state:  # If the button is pressed again, stop producing output
+            if not Bbutton_state:  #If the BOOT button is pressed again, stop producing output/recording sensor values
                 record = False
                 print("Stopped")
                 time.sleep(1)
-
-
