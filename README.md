@@ -2,8 +2,10 @@
 Save sensor data from a [TSL2591 light sensor](https://learn.adafruit.com/adafruit-tsl2591/) ([instructions](https://learn.adafruit.com/adafruit-tsl2591/python-circuitpython)) connected to a [QT Py RP2040](https://www.adafruit.com/product/4900)
 
 ## How it works
+When the 'boot' button on the QT Py is pressed, it sends data from the light sensor through a USB cable to a computer that saves the data in a csv file until the 'boot' button is pressed again.
 
 ## Requirements
+You need to have the python package [serial](https://pythonhosted.org/pyserial/) installed in your environment.
 
 ## Setup
 
