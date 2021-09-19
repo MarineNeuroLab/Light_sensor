@@ -9,7 +9,7 @@ When the 'boot' button on the QT Py is pressed, it continuously saves data from 
 ## Requirements
 You need to have the python package [serial](https://pythonhosted.org/pyserial/) installed in your environment.
 
-## Setup
+## Setup and use instructions
 
 - Configure the QT Py according to [these instructions](https://learn.adafruit.com/adafruit-qt-py-2040/circuitpython) if you have not already done so
 - Copy over the following to the "lib" folder on your CIRCUITPY (D:) drive from one of the [CircuitPython library bundles](https://circuitpython.org/libraries):
