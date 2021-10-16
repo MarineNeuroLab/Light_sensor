@@ -1,5 +1,5 @@
 """
-Read sensor data from a TSL2591 light sensory being recorded by QT Py 2040
+Read sensor data from a TSL2591 light sensor through a QT Py 2040 connected to your PC via USB
 
 Inspired by https://makersportal.com/blog/2018/2/25/python-datalogger-reading-the-serial-output-from-arduino-to-analyze-data-using-pyserial
 and
@@ -9,7 +9,7 @@ https://github.com/kavli-ntnu/wheel_tracker/blob/master/save_tracking.py
 import serial
 from datetime import datetime
 
-ser = serial.Serial('COM3') #The port to read from (this is a USB port on my laptop)
+ser = serial.Serial('COM3') #The port to read from (i.e. the USB port the QT Py is connected to)
 ser.flushInput() #This clears the serial buffer so everything is ready to go
 
 # Specify which folder to save the data in
@@ -23,13 +23,13 @@ output_file='{}/{}_light.csv'.format(root_folder, now)
 
 # Main code:
 with open(output_file,"a") as f: #Open the csv file
-    f.write('Timestamp,Total light (lux),Visible (0-2147483647),Infrared (0-65535)\n') #Add headers to the file
+    f.write('Timestamp,Total light (lux),Visible (0-2147483647),Infrared (0-65535)\n') #Add headers to the file. Numbers in brackets are the ranges of possible values
 
     print("Ready") #Print out a message in the terminal to indicate that the program is ready to go
 
-    while True: #If the BOOT button on the QT Py is pressed, the following is executed:
+    while True: #If the BOOT button on the QT Py is pressed, the following code is executed:
             ser_bytes = ser.readline() #Read one line from the port
-            decoded_bytes = ser_bytes.decode('utf-8') #Convert data so it's legible
+            decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
             decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
             
             if "Stop" in decoded_bytes: #If one of the lines contains the word "stop", this indicates that the BOOT button on the QT Py has been pressed again and the program should be terminated
