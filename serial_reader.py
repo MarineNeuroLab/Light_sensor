@@ -25,9 +25,9 @@ output_file='{}/{}_light.csv'.format(root_folder, now)
 # While this variable is True, values will be recorded
 record = True
 
-#If the key under keyboard.add_hotkey is pressed, this function is envoked and record is set to False
+#If the key under keyboard.add_hotkey is pressed, this function is invoked and record is set to False
 def stop_recording(): 
-    global record
+    global record #Make this variable global
     record=False
 keyboard.add_hotkey('s', stop_recording) #Specify which key to press to stop recording values (default = s)
 
@@ -56,4 +56,4 @@ while record: #While record = True, run the following code to record and save li
     f.write('{},{},{},{}\n'.format(now,lux_value,visible_value,ir_value))
 
 f.close() #Close the file when record is no longer True
-print('Recording is stopped')
+print('Finished saving light values')
