@@ -4,7 +4,7 @@ Save data from a [TSL2591 light sensor](https://learn.adafruit.com/adafruit-tsl2
 ## How it works
 When the 'boot' button on the QT Py is pressed, it continuously saves data from the light sensor in a csv file on your computer until the 'boot' button is pressed again.
 
-> NOTE: if you prefer not to use the 'boot' button to indicate start/stop, but you'd rather record light values continuously, then check out the *Continuous-acquisition* branch in this repository.
+> NOTE: if you prefer not to use the 'boot' button to indicate start/stop, but you'd rather record light values continuously from the moment you execute the code and until a key on your keyboard is pressed, then check out the *Continuous-acquisition* branch in this repository instead.
 
 <img src="QTPy_with_lightsensor.jpg" alt="QT Py with light sensor in front of a screen that displays the light values being printed out" width="400"/>
 
@@ -34,3 +34,5 @@ You need to have the python package [serial](https://pythonhosted.org/pyserial/)
 - Press the 'boot' button again to stop recording values
 - A csv file with the recorded values and timestamps can now be found in the location you specified
 
+
+**Tip:** you can modify the gain and integration time of the light sensor under 'SETTTINGS' in the *code.py* file.
