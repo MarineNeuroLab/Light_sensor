@@ -31,23 +31,17 @@ with open(output_file,"a") as f: #Open the csv file
             ser_bytes = ser.readline() #Read one line from the port
             decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
             decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
+                      
+            # Extract the different light values and convert them to floats
+            lux_value = float(decoded_bytes_split[0])
+            visible_value = float(decoded_bytes_split[1])
+            ir_value = float(decoded_bytes_split[2])
+
+            # Get the current time
+            now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
             
-            if "Stop" in decoded_bytes: #If one of the lines contains the word "stop", this indicates that the BOOT button on the QT Py has been pressed again and the program should be terminated
-                print("Stopped")
-                f.close() #Close the file
-                break
-
-            else: #Until the BOOT button is pressed a second time, do the following:
-                # Extract the different light values and convert them to floats
-                lux_value = float(decoded_bytes_split[0])
-                visible_value = float(decoded_bytes_split[1])
-                ir_value = float(decoded_bytes_split[2])
-
-                # Get the current time
-                now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
-                
-                # Print out the values in the terminal
-                print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
-                
-                # Save the values in the csv file
-                f.write('{},{},{},{}\n'.format(now,lux_value,visible_value,ir_value))
+            # Print out the values in the terminal
+            print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
+            
+            # Save the values in the csv file
+            f.write('{},{},{},{}\n'.format(now,lux_value,visible_value,ir_value))
