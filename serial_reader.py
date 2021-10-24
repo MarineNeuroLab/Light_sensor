@@ -7,6 +7,7 @@ https://github.com/kavli-ntnu/wheel_tracker/blob/master/save_tracking.py
 """
 
 import serial
+import keyboard
 from datetime import datetime
 
 ser = serial.Serial('COM3') #The port to read from (i.e. the USB port the QT Py is connected to)
@@ -21,27 +22,38 @@ now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 # Create a cvs file with a name based on the current time in the root folder specified 
 output_file='{}/{}_light.csv'.format(root_folder, now)
 
+# While this variable is True, values will be recorded
+record = True
+
+#If the key under keyboard.add_hotkey is pressed, this function is envoked and record is set to False
+def stop_recording(): 
+    global record
+    record=False
+keyboard.add_hotkey('s', stop_recording) #Specify which key to press to stop recording values (default = s)
+
 # Main code:
-with open(output_file,"a") as f: #Open the csv file
-    f.write('Timestamp,Total light (lux),Visible (0-2147483647),Infrared (0-65535)\n') #Add headers to the file. Numbers in brackets are the ranges of possible values
+f = open(output_file,"a") #Open the csv file
+f.write('Timestamp,Total light (lux),Visible (0-2147483647),Infrared (0-65535)\n') #Add headers to the file. Numbers in brackets are the ranges of possible values
 
-    print("Ready") #Print out a message in the terminal to indicate that the program is ready to go
+while record: #While record = True, run the following code to record and save light values in output_file
 
-    while True: #If the BOOT button on the QT Py is pressed, the following code is executed:
-            ser_bytes = ser.readline() #Read one line from the port
-            decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
-            decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
-                      
-            # Extract the different light values and convert them to floats
-            lux_value = float(decoded_bytes_split[0])
-            visible_value = float(decoded_bytes_split[1])
-            ir_value = float(decoded_bytes_split[2])
+    ser_bytes = ser.readline() #Read one line from the port
+    decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
+    decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
+    
+    # Extract the different light values and convert them to floats
+    lux_value = float(decoded_bytes_split[0])
+    visible_value = float(decoded_bytes_split[1])
+    ir_value = float(decoded_bytes_split[2])
 
-            # Get the current time
-            now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
-            
-            # Print out the values in the terminal
-            print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
-            
-            # Save the values in the csv file
-            f.write('{},{},{},{}\n'.format(now,lux_value,visible_value,ir_value))
+    # Get the current time
+    now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
+    
+    # Print out the values in the terminal
+    print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
+    
+    # Save the values in the csv file
+    f.write('{},{},{},{}\n'.format(now,lux_value,visible_value,ir_value))
+
+f.close() #Close the file when record is no longer True
+print('Recording is stopped')
