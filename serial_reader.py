@@ -99,7 +99,7 @@ while True: #While True, run the following code to record and save temperature v
     
     plt.xlabel("Time")
     plt.ylabel("Total light (lux)")
-    plt.savefig('{}/{}.png'.format(root_folder,timeend[0:-7]),dpi=300)
+    plt.savefig('{}/{}_light.png'.format(root_folder,timeend[0:-7]),dpi=300)
     
     # Include a break to avoid making unnecessary new files when the specified delay is shorter than a minute
     time.sleep(59)
