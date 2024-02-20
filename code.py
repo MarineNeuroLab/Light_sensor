@@ -43,4 +43,3 @@ while True: #Do the following continuously:
     """
     # Print out the values that should be kept to the serial port
     print("{},{},{}".format(sensor.lux, sensor.visible, sensor.infrared))
-    #time.sleep(0.5) #Introduce a delay if you want readings to be taken at a set rate
