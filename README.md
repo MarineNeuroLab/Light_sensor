@@ -2,7 +2,7 @@
 Save data from a [TSL2591 light sensor](https://learn.adafruit.com/adafruit-tsl2591/) ([instructions](https://learn.adafruit.com/adafruit-tsl2591/python-circuitpython)) connected to a [QT Py RP2040](https://www.adafruit.com/product/4900) with a [STEMMA QT cable](https://www.adafruit.com/product/4399) and your PC via USB and save this data in a .csv file and as a plot at a specified time once per day
 
 ## How it works
-When the serial_reader.py file is run, it continuously saves data from the light sensor in a csv file on your computer until a user-defined time of day has been reached.
+When the serial_reader.py file is run, it continuously saves data from the light sensor in a csv file on your computer until a user-defined time of day has been reached. It then closes the .csv file, creates and saves a plot of the saved data, and then creates a new .csv file to repeat the process. I.e. measurements are automatically saved once a day.
 
 <img src="QTPy_with_lightsensor.jpg" alt="QT Py with light sensor in front of a screen that displays the light values being printed out" width="400"/>
 
