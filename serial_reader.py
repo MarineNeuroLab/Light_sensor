@@ -14,8 +14,8 @@ https://github.com/kavli-ntnu/wheel_tracker/blob/master/save_tracking.py
 root_folder = 'C:/DATA/Sensor_data' 
 
 # Specify the time (in 24hr clock format) when a new file should be made (e.g. every day at midnight)
-newfile_hour = 23
-newfile_min = 23
+newfile_hour = 0
+newfile_min = 0
 
 # Specify the delay between measurements to be saved (in seconds) 
 # NOTE: this is not precise as it doesn't take into consideration the time it takes to run the code itself
@@ -73,9 +73,6 @@ while True: #While True, run the following code to record and save temperature v
 
             # Print out the values in the terminal
             print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
-            
-            # Save the values in the csv file
-            f.write('{},{},{},{}\n'.format(now[0:-4],lux_value,visible_value,ir_value))
 
             # Introduce the specified delay to only record values roughly every X seconds
             time.sleep(delay)
@@ -86,8 +83,7 @@ while True: #While True, run the following code to record and save temperature v
     # Once the while loop has been exited, print a status update in the terminal
     timeend = datetime.now().strftime('%Y-%m-%d_%H-%M-%S.%f') # Get the current time (as a string)
     print('Light measurements started saving just after {}, finished saving at {}'.format(timestart[0:-7],timeend[0:-7]))
-    print('Recording will continue in about 1 minute \n \n')
-
+    
     # Create and save a plot of the values collected
     figure = plt.figure() #Create a plot
     ax = figure.add_subplot(111)
@@ -100,6 +96,8 @@ while True: #While True, run the following code to record and save temperature v
     plt.xlabel("Time")
     plt.ylabel("Total light (lux)")
     plt.savefig('{}/{}_light.png'.format(root_folder,timeend[0:-7]),dpi=300)
+    print('Plot of measurements has been saved')
     
     # Include a break to avoid making unnecessary new files when the specified delay is shorter than a minute
-    time.sleep(59)
+    print('Recording will continue in about 1 minute \n \n')
+    time.sleep(61)
