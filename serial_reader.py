@@ -58,27 +58,37 @@ while True: #While True, run the following code to record and save temperature v
             decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
             decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
        
-            # Extract the different light values and convert them to floats
-            lux_value = float(decoded_bytes_split[0])
-            visible_value = float(decoded_bytes_split[1])
-            ir_value = float(decoded_bytes_split[2])
+            # Extract the different light values and convert them to floats 
+            # after making sure the received value can be converted (if not that indiates something the value is corrupted and cannot be saved)
+            try: 
+                lux_value = float(decoded_bytes_split[0])
+                visible_value = float(decoded_bytes_split[1])
+                ir_value = float(decoded_bytes_split[2])
 
-            # Get the current time (as a string)
-            now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
-           
-            # Save the values in the csv file and in the lists
-            f.write('{},{},{},{}\n'.format(now[0:-4],lux_value,visible_value,ir_value))
-            timevec.append(now[0:-4])
-            luxvec.append(lux_value)    
+            except: #If there is an error (i.e. values above cannot be converted to float), get the current time and save that with NaNs instead
+                now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
+                f.write('{},NaN,NaN,NaN\n'.format(now[0:-4]))
+                timevec.append(now[0:-4])
+                luxvec.append('NaN') 
+                print('{} Error occured, values saved as NaNs'.format(now[0:-7]))
 
-            # Print out the values in the terminal
-            print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
-
-            # Introduce the specified delay to only record values roughly every X seconds
-            time.sleep(delay)
+            else: #If there is no error, proceed as usual
+                # Get the current time (as a string)
+                now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
             
-            # Get the current time so the while loop can be evaluated again (is it appropriate to stay in the loop or exit it?)
-            timenow = datetime.now()
+                # Save the values in the csv file and in the lists
+                f.write('{},{},{},{}\n'.format(now[0:-4],lux_value,visible_value,ir_value))
+                timevec.append(now[0:-4])
+                luxvec.append(lux_value)    
+
+                # Print out the values in the terminal
+                print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
+
+                # Introduce the specified delay to only record values roughly every X seconds
+                time.sleep(delay)
+                
+                # Get the current time so the while loop can be evaluated again (is it appropriate to stay in the loop or exit it?)
+                timenow = datetime.now()
             
     # Once the while loop has been exited, print a status update in the terminal
     timeend = datetime.now().strftime('%Y-%m-%d_%H-%M-%S.%f') # Get the current time (as a string)
