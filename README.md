@@ -30,5 +30,5 @@ You need to have the python packages [serial](https://pythonhosted.org/pyserial/
 - Run the *serial_reader.py* file in your terminal to start recording light values. These will also be printed out in your terminal
 - A .csv file with the recorded values and timestamps, plus a plot with the same information, will be saved in the location you specified within *serial_reader.py* once the time you specified has been reached
 
-**Tip:** you can modify the gain and integration time of the light sensor under 'SETTTINGS' in the *code.py* file.
+**Tip:** you can modify the gain and integration time of the light sensor, and set the frequency at which measurements should be collected, under 'SETTINGS' in the *code.py* file.
 
