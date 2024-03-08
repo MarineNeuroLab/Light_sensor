@@ -5,6 +5,7 @@ import board
 import busio
 import adafruit_tsl2591
 import neopixel
+import time
 
 i2c = busio.I2C(board.SCL1, board.SDA1)  # Create sensor object
 sensor = adafruit_tsl2591.TSL2591(i2c)  # Initialise the sensor
@@ -26,6 +27,9 @@ sensor.integration_time = adafruit_tsl2591.INTEGRATIONTIME_100MS
 # sensor.integration_time = adafruit_tsl2591.INTEGRATIONTIME_500MS
 #sensor.integration_time = adafruit_tsl2591.INTEGRATIONTIME_600MS
 
+### Set the interval between measurements in seconds
+time_delay = 1
+
 ######################################################################
 
 # Main code
@@ -43,3 +47,4 @@ while True: #Do the following continuously:
     """
     # Print out the values that should be kept to the serial port
     print("{},{},{}".format(sensor.lux, sensor.visible, sensor.infrared))
+    time.sleep(time_delay)

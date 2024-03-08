@@ -13,14 +13,9 @@ https://github.com/kavli-ntnu/wheel_tracker/blob/master/save_tracking.py
 # Specify which folder to save the data in
 root_folder = 'C:/DATA/Sensor_data' 
 
-# Specify the time (in 24hr clock format) when a new file should be made (e.g. every day at midnight)
-newfile_hour = 0
+# Specify the time (in 24hr clock format) when a new file should be made (e.g. every day at midnight would be 0)
+newfile_hour = 7
 newfile_min = 0
-
-# Specify the delay between measurements to be saved (in seconds) 
-# NOTE: this is not precise as it doesn't take into consideration the time it takes to run the code itself
-# Range: 0.5-50 seconds
-delay = 1
 
 # Speciy which port to read the data from (i.e. the USB port the QtPy is connected to)
 port = 'COM10'
@@ -33,7 +28,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ser = serial.Serial(port) #Specify which port to read from 
-ser.flushInput() #This clears the serial buffer so everything is ready to go
 
 # Main code:
 while True: #While True, run the following code to record and save temperature values in  the output file specified
@@ -49,47 +43,53 @@ while True: #While True, run the following code to record and save temperature v
 
     with open(output_file,"a") as f: #Open the file
         f.write('Timestamp,Total light (lux),Visible (0-2147483647),Infrared (0-65535)\n') #Add headers to the file. Numbers in brackets are the ranges of possible values
-        timestart = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f') #Save the current time as a string, just before measurements start being saved
-        timenow = datetime.now() #Save the current time, which will refresh regularly through the script
+    
+    timestart = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f') #Save the current time as a string, just before measurements start being saved
+    timenow = datetime.now() #Save the current time, which will refresh regularly through the script
 
-        # While the current time is NOT the set newfile_hour/min time, continuously save data to the file
-        while timenow.hour != newfile_hour or timenow.minute != newfile_min:
+    ser.flushInput() #This clears the serial buffer so everything is ready to go
+
+    # While the current time is NOT the set newfile_hour/min time, continuously save data to the file
+    while timenow.hour != newfile_hour or timenow.minute != newfile_min:
+        write_to_file = True
+
+        try: #This section can be error prone, hence why it's in a 'try' clause
             ser_bytes = ser.readline() #Read one line from the port
-            decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
-            decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
-       
-            # Extract the different light values and convert them to floats 
-            # after making sure the received value can be converted (if not that indiates something the value is corrupted and cannot be saved)
-            try: 
-                lux_value = float(decoded_bytes_split[0])
-                visible_value = float(decoded_bytes_split[1])
-                ir_value = float(decoded_bytes_split[2])
-
-            except: #If there is an error (i.e. values above cannot be converted to float), get the current time and save that with NaNs instead
-                now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
-                f.write('{},NaN,NaN,NaN\n'.format(now[0:-4]))
-                timevec.append(now[0:-4])
-                luxvec.append('NaN') 
-                print('{} Error occured, values saved as NaNs'.format(now[0:-7]))
-
-            else: #If there is no error, proceed as usual
-                # Get the current time (as a string)
-                now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f')
+        
+            if not ser_bytes: #If nothing arrived via serial, then do not write to file
+                    write_to_file = False
+            else: #Otherwise continue
+                decoded_bytes = ser_bytes.decode('utf-8') #Convert the read data so it's legible
+                decoded_bytes_split = decoded_bytes.strip().split(',') #Strip away the prefix and suffix characters, and split the values using the comma as the separator
             
-                # Save the values in the csv file and in the lists
+            # Attempt to extract the temperature value and convert it to a float (if that can't be done then this indicates the received value corrupted and cannot be saved properly)
+            lux_value = float(decoded_bytes_split[0])
+            visible_value = float(decoded_bytes_split[1])
+            ir_value = float(decoded_bytes_split[2])
+
+        except: #If there is an error (i.e. values above cannot be converted to float), make it a NaN instead
+            lux_value = np.nan
+            visible_value = np.nan
+            ir_value = np.nan
+            now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f') #Get the current time (as a string)
+            print('{} Error occured, measurements will be saved as NaNs'.format(now[0:-7]))
+
+        if write_to_file: #If this value is true, then write to file 
+            now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f') # Get the current time (as a string)
+        
+            # Append the values to the existing csv file and to the lists
+            with open(output_file,"a") as f:
                 f.write('{},{},{},{}\n'.format(now[0:-4],lux_value,visible_value,ir_value))
-                timevec.append(now[0:-4])
-                luxvec.append(lux_value)    
-
-                # Print out the values in the terminal
-                print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
-
-                # Introduce the specified delay to only record values roughly every X seconds
-                time.sleep(delay)
-                
-                # Get the current time so the while loop can be evaluated again (is it appropriate to stay in the loop or exit it?)
-                timenow = datetime.now()
             
+            timevec.append(now[0:-4])
+            luxvec.append(lux_value) 
+
+            # Print out the values in the terminal
+            print('{} | Light: {} lux | Visible: {} | IR: {}'.format(now[0:-7],lux_value,visible_value,ir_value))
+          
+            # Get the current time so the while loop can be evaluated again (is it appropriate to stay in the loop or exit it?)
+            timenow = datetime.now()
+        
     # Once the while loop has been exited, print a status update in the terminal
     timeend = datetime.now().strftime('%Y-%m-%d_%H-%M-%S.%f') # Get the current time (as a string)
     print('Light measurements started saving just after {}, finished saving at {}'.format(timestart[0:-7],timeend[0:-7]))
